@@ -86,5 +86,5 @@ RUN rm -rf /${G_SRC_FILE}
 
 WORKDIR /root
 
-ENTRYPOINT ["source","/opt/rh/devtoolset-11/enable"]
+# ENTRYPOINT ["source","/opt/rh/devtoolset-11/enable"]
 

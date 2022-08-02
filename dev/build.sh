@@ -1,7 +1,6 @@
 # 配置GDB调试显示的漂亮点
 G_SRC_FILE=$1
 
-# source /opt/rh/devtoolset-11/enable
 echo "installing depends ..."
 yum update -y 
 # gettext： 在编译git的时候需要执行msgfmt命令
