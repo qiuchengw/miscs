@@ -5,20 +5,21 @@ echo "installing depends ..."
 yum update -y 
 # gettext： 在编译git的时候需要执行msgfmt命令
 # cmake：需要使用openssl-devel
-yum install -y wget mlocate which vim zsh gettext openssl-devel
+# yum install -y wget mlocate which vim zsh gettext openssl-devel
 
 echo "import keys ..."
 wget http://mirrors.163.com/centos/RPM-GPG-KEY-CentOS-7
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 
 yum install -y centos-release-scl scl-utils-build 
+echo "==> install devltoolset-11!"
 yum install -y devtoolset-11
 echo "==> depends installed!"
 
-echo "==> building git ..."
 # scl enable devtoolset-11 bash 
 source /opt/rh/devtoolset-11/enable
 
+echo "==> building git ..."
 # gcc 版本号
 # GCC_VER=`gcc -dumpversion`
 
@@ -39,7 +40,7 @@ make -j$nproc NO_TCLTK=1 && make install
 # install cmake
 echo "==> building cmake ..."
 cd ${G_SRC_FILE}/cmake-3.23.3/ 
-./bootstrap --parallel=8 --prefix=/usr/local
+./bootstrap --parallel=$nproc --prefix=/usr/local
 make -j$nproc && make install
 
 # install boost
