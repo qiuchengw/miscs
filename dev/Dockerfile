@@ -7,7 +7,7 @@
 # docker buildx build -t ponycool/${IMAGE}-${VERSION} --load ./ 
 
 FROM centos:7
-LABEL org.opencontainers.image.authors="qiuchengw@qiuchengw.com"
+LABEL org.opencontainers.image.authors="qiuchengw@163.com"
 
 # 用 root 用户操作
 USER root
@@ -39,11 +39,21 @@ RUN set -evx -o pipefail && yum update -y \
                 dos2unix \
                 zsh \
                 openssh-server \
-                java-1.8.0-openjdk-devel
+                openssl-devel \
+                gettext \
+                bzip2-devel \
+                libffi-devel \
+                ncurses-devel \
+                readline-devel \
+                xz lzma xz-devel sqlite-devel gdbm-devel \
+                java-1.8.0-openjdk-devel \
+        && yum autoremove -y
 
 # 配置GDB，让调试显示的漂亮点
 COPY gdb_printer /${G_APP_DIR}/
-COPY .gdbinit ~/
+COPY .gdbinit ${G_HOME_DIR}/
+# 复制pip源设置
+COPY pip.conf ${G_HOME_DIR}/.pip/
 
 # 安装新的git
 ADD git-2.37.1.tar.gz ${G_SRCFILE_DIR}/
@@ -51,6 +61,8 @@ ADD git-2.37.1.tar.gz ${G_SRCFILE_DIR}/
 ADD cmake-3.23.3.tar.gz ${G_SRCFILE_DIR}/
 # 配置安装boost
 ADD boost_1_79_0.tar.gz ${G_SRCFILE_DIR}/
+# 安装Python
+ADD Python-3.8.10.tgz ${G_SRCFILE_DIR}/
 
 # 使用脚本再来一次执行安装
 COPY build.sh ${G_SRCFILE_DIR}/
@@ -92,13 +104,12 @@ RUN set -evx -o pipefail \
         && sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
 # 端口2022
 EXPOSE 2022
-CMD ["/usr/sbin/sshd", "-D"]
+# CMD ["/usr/sbin/sshd", "-D"]
 
 # Add PATH for node & YARN
 
 # 删除 apt/lists，可以减少最终镜像大小
-RUN rm -rf /${G_SRCFILE_DIR} 
-
+# RUN rm -rf /${G_SRCFILE_DIR} 
 WORKDIR ${G_HOME_DIR}
 
 # ENTRYPOINT ["source","/opt/rh/devtoolset-11/enable"]
