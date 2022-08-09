@@ -1,7 +1,7 @@
 FROM centos:7
 
 ENV container docker
-# RUN echo 'root:root' | chpasswd
+RUN echo 'root:root' | chpasswd
 
 # 修改yum源
 # COPY yum.repos.d/* /etc/yum.repos.d/
