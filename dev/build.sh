@@ -61,4 +61,5 @@ cd ${G_SRC_FILE}/boost_1_79_0/
 
 # 删除本地的安装文件，确保镜像大小较小
 cd ${G_SRC_FILE}/../
-rm -rf ${G_SRC_FILE}
+# rm -rf ${G_SRC_FILE}
+sleep 5

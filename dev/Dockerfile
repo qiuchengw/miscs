@@ -1,19 +1,27 @@
-# # 启用buildx插件，适用于v19.03+ 
-# docker buildx create --use --name larger_log --node larger_log0 --driver-opt env.BUILDKIT_STEP_LOG_MAX_SIZE=10485760 
-# # 检查当前的构建器实例
-# docker buildx inspect larger_log --bootstrap
-
-# # 编译生成
-# docker buildx build -t ponycool/${IMAGE}-${VERSION} --load ./ 
+# run docker
+# --shm-size 2147483648         /dev/shm 大小
+# -v /d/dshare:/mnt/data        注意：windows下的挂载路径形式 /d/dshare
+# docker run -it --privileged --shm-size 2147483648 -v /d/dshare:/mnt/data --name [name] [image-id] /bin/zsh
 
 FROM centos:7
 LABEL org.opencontainers.image.authors="qiuchengw@163.com"
+
+ENV container docker
 
 # 用 root 用户操作
 USER root
 ENV G_APP_DIR="/opt/app/"
 ENV G_SRCFILE_DIR="/opt/appsrc"
 ENV G_HOME_DIR="/root"
+
+# 删除影响sbin/init启动的项目
+RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done)
+RUN rm -f /etc/systemd/system/*.wants/* \
+rm -f /lib/systemd/system/local-fs.target.wants/*; \
+rm -f /lib/systemd/system/sockets.target.wants/*udev*; \
+rm -f /lib/systemd/system/sockets.target.wants/*initctl*; \
+rm -f /lib/systemd/system/basic.target.wants/*;\
+rm -f /lib/systemd/system/anaconda.target.wants/*;
 
 # 修改yum源
 # COPY yum.repos.d/* /etc/yum.repos.d/
@@ -43,6 +51,7 @@ RUN set -evx -o pipefail && yum update -y \
                 gettext \
                 bzip2-devel \
                 libffi-devel \
+                net-tools \
                 ncurses-devel \
                 readline-devel \
                 xz lzma xz-devel sqlite-devel gdbm-devel \
@@ -88,11 +97,15 @@ RUN set -evx -o pipefail && cd ${G_SRCFILE_DIR}/ && dos2unix ./build.sh && ./bui
 #     adduser me sudo && \
 #     echo 'me:password' | chpasswd
 
+# 环境变量
+ENV PATH=''
+
 # 配置zsh 和 oh-my-zsh 放到root目录下，没有其它的用户
 ADD ohmyzsh.tar.gz ${G_HOME_DIR}/
 RUN set -evx -o pipefail \
         && cp ${G_HOME_DIR}/.oh-my-zsh/templates/zshrc.zsh-template ${G_HOME_DIR}/.zshrc \
         && sed -i 's/^plugins=(/plugins=(zsh-autosuggestions zsh-syntax-highlighting z /' ${G_HOME_DIR}/.zshrc \
+        && echo 'source /opt/rh/devtoolset-11/enable' >> ${G_HOME_DIR}/.zshrc \
         && chsh -s /bin/zsh
 
 # 配置sshd
@@ -104,9 +117,10 @@ RUN set -evx -o pipefail \
         && sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
 # 端口2022
 EXPOSE 2022
-# CMD ["/usr/sbin/sshd", "-D"]
 
-# Add PATH for node & YARN
+# 需要用户密码
+RUN echo 'root:root' | chpasswd
+CMD ["/usr/sbin/init"]
 
 # 删除 apt/lists，可以减少最终镜像大小
 # RUN rm -rf /${G_SRCFILE_DIR} 
