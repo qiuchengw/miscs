@@ -1,0 +1,30 @@
+# yaml 配置
+version: '3'
+services:
+  devcos:
+    shm_size: 10GB
+    image: "devcos:1.7"
+    ports:
+      - "2022:12022"
+    # sysctls:
+    #   # ERROR: for develop_1  Cannot start service develop: OCI runtime create 
+    #   # failed: container_linux.go:348: starting container process caused
+    #   # "process_linux.go:402: container init caused \"open
+    #   # /proc/sys/net/core/rmem_max: no such file or directory\"": unknown
+      
+    #   # Not all namespaced kernel parameters on the host are available in the container.
+    #   # >>>$ docker run --rm devcos:1.7 ls -l /proc/sys/net/core 查看支持的namespace
+    #   # - net.core.rmem_max=26214400
+    #   -
+    volumes:
+      - "/d/dshare:/mnt/data"
+      - type: bind
+        source: /c/Users/fz/.ssh
+        target: /root/.ssh
+
+volumes:
+  dshare: 
+
+# networks:
+#     default:
+#         driver: host
