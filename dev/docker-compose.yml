@@ -2,8 +2,9 @@
 version: '3'
 services:
   devcos:
+    privileged: true
     shm_size: 10GB
-    image: "devcos:1.7"
+    image: "devcos:1.8"
     ports:
       - "2022:12022"
     # sysctls:
