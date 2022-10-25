@@ -6,6 +6,7 @@
 # -v /d/dshare:/mnt/data        注意：windows下的挂载路径形式 /d/dshare
 # docker run -it --privileged --shm-size 2147483648 -v /d/dshare:/mnt/data --name [name] [image-id] /bin/zsh
 # docker run -it --privileged --shm-size 2147483648 --sysctl net.core.rmem_max=8388608 -v /d/dshare:/mnt/data --name devcos 8363908678f7
+# docker run -it --privileged --net=host --shm-size 2147483648 -v /d/dshare:/mnt/data --name devcos_allport ee6ccb83f983
 
 FROM centos:7
 LABEL org.opencontainers.image.authors="qiuchengw@163.com"
