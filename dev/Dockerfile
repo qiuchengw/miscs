@@ -6,7 +6,28 @@
 # -v /d/dshare:/mnt/data        注意：windows下的挂载路径形式 /d/dshare
 # docker run -it --privileged --shm-size 2147483648 -v /d/dshare:/mnt/data --name [name] [image-id] /bin/zsh
 # docker run -it --privileged --shm-size 2147483648 --sysctl net.core.rmem_max=8388608 -v /d/dshare:/mnt/data --name devcos 8363908678f7
-# docker run -it --privileged --net=host --shm-size 2147483648 -v /d/dshare:/mnt/data --name devcos_allport ee6ccb83f983
+# docker run -it --privileged --net=host --shm-size 21474836480 --sysctl kernel.msgmax=65536 --sysctl fs.mqueue.msg_max=10000 --sysctl kernel.shmmni=40960 -v /d/dshare:/mnt/data --name devcos_allport_shm 18294fe2e99e
+
+# 设置宿主机的参数： 
+# 注意，如果是windows docker destop，还需要在/etc/profile 中加上 sysctl -p 让以下设置生效
+# vim /etc/sysctl.conf
+# --------------------------------
+# # content of this file will override /etc/sysctl.d/*
+# net.core.rmem_max = 8388608
+# # kernel.shmmni=4096
+# # kernel.shmmax=17179869184
+# # kernel.shmall=8388608
+# # kernel.sem=<SEMMSL> <SEMMNS> <SEMOPM> <SEMMNI>
+# # kernel.sem=250 1024000 32 4096
+# kernel.msgmni=32768
+# kernel.msgmax=65536
+# kernel.msgmnb=1048576
+# # net.core.rmem_default=256960
+# net.core.rmem_max=8388608
+# # net.core.wmem_default=256960
+# # net.core.wmem_max=256960
+
+# docker run -it --privileged --net=host --ipc=host --shm-size 21474836480 -v /d/dshare:/mnt/data --name devcos_allport_shm 18294fe2e99e
 
 FROM centos:7
 LABEL org.opencontainers.image.authors="qiuchengw@163.com"
