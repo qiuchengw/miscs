@@ -84,9 +84,9 @@ ADD ohmyzsh.tar.gz ${G_HOME_DIR}/
 RUN set -evx -o pipefail \
         && cp ${G_HOME_DIR}/.oh-my-zsh/templates/zshrc.zsh-template ${G_HOME_DIR}/.zshrc \
         && sed -i 's/^plugins=(/plugins=(zsh-autosuggestions zsh-syntax-highlighting z /' ${G_HOME_DIR}/.zshrc \
-        && echo 'export PYTHON3_HOME=/usr/local/python3.8.10' \
-        && echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PYTHON3_HOME/lib' \
-        && echo 'export PATH=$PATH:$PYTHON3_HOME/bin' \
+        && echo 'export PYTHON3_HOME=/usr/local/python3.8.10' >> ${G_HOME_DIR}/.zshrc \
+        && echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PYTHON3_HOME/lib' >> ${G_HOME_DIR}/.zshrc \
+        && echo 'export PATH=$PATH:$PYTHON3_HOME/bin' >> ${G_HOME_DIR}/.zshrc \
         && echo 'source /opt/rh/devtoolset-11/enable' >> ${G_HOME_DIR}/.zshrc \
         && chsh -s /bin/zsh
 

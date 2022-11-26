@@ -53,8 +53,8 @@ ln -s /usr/local/python3.8.10/bin/pip3 /usr/local/bin/pip3
 echo "==> building boost ..."
 cd ${G_SRC_FILE}/boost_1_79_0/ 
 sed -i 's/compile-link-flags <link>shared\/<target-os>/compile-link-flags <link>shared\/<link>static\/<target-os>/g' ${G_SRC_FILE}/boost_1_79_0/tools/build/src/tools/gcc.jam
-./b2 --clean
 ./bootstrap.sh --with-libraries=all --with-toolset=gcc --with-python=python3
+# ./b2 --clean
 ./b2 -q toolset=gcc-${GCC_VER} 
 ./b2 install --prefix=/usr
 
