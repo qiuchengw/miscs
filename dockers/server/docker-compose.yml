@@ -38,7 +38,7 @@ services:
       MYSQL_PASSWORD: "Abc123654"
       MYSQL_INITDB_SKIP_TZINFO: "Asia/Shanghai"
     ports:
-      - 33106:3306
+      - 13306:3306
     network_mode: "bridge"
 
   redis:
