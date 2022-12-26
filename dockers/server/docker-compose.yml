@@ -1,0 +1,59 @@
+# application
+version: '0.1'
+services:
+  nginx:
+    image: nginx:1.23.2
+    privileged: true
+    container_name: nginx
+    restart: always
+    ports:
+      - 12080:80
+      - 12443:443
+    volumes:
+      - /e/opt/nginx/data/front:/usr/share/nginx/html
+      - /e/opt/nginx/www:/var/www
+      - /e/opt/nginx/logs:/var/log/nginx
+      - /e/opt/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - /e/opt/nginx/etc/cert:/etc/nginx/cert
+      - /e/opt/nginx/conf.d:/etc/nginx/conf.d
+    environment:
+      - NGINX_PORT=80
+
+  mysql:
+    restart: always
+    privileged: true
+    image: mysql:8.0.31
+    container_name: mysql8031
+    volumes:
+      - /e/opt/mysql/db:/var/lib/mysql
+      - /e/opt/mysql/conf:/etc/mysql/conf.d
+      - /e/opt/mysql/logs:/logs
+    command:
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+      --explicit_defaults_for_timestamp=true
+    environment:
+      MYSQL_ROOT_PASSWORD: "Abc123654"
+      MYSQL_USER: "test"
+      MYSQL_PASSWORD: "Abc123654"
+      MYSQL_INITDB_SKIP_TZINFO: "Asia/Shanghai"
+    ports:
+      - 13306:3306
+    network_mode: "bridge"
+
+  redis:
+    image: redis:5.0.14
+    container_name: redis5014
+    volumes:
+      - /e/opt/redis/data:/data
+      - /e/opt/redis/conf/redis.conf:/etc/redis/redis.conf
+      - /e/opt/redis/logs:/logs
+    command: redis-server /etc/redis/redis.conf
+    #   #  两个写入操作 只是为了解决启动后警告 可以去掉
+    #    /bin/bash -c "echo 511 > /proc/sys/net/core/somaxconn
+    #    && echo never > /sys/kernel/mm/transparent_hugepage/enabled
+    #    && redis-server /usr/local/etc/redis/redis.conf"
+    ports:
+      # 使用宿主机的端口映射到容器的端口
+      # 宿主机：容器
+      - 16379:6379
