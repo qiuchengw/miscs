@@ -27,7 +27,7 @@
 # # net.core.wmem_default=256960
 # # net.core.wmem_max=256960
 
-# docker run -it --privileged --net=host --ipc=host --shm-size 21474836480 -v /d/dshare:/mnt/data --name devcos_allport_shm 18294fe2e99e
+# docker run -it --privileged --net=host --ipc=host --shm-size 21474836480 -v /d/dshare:/mnt/data --hostname DEVCOS2 --name devcos_allport_flink2 a406407a439a
 
 FROM centos:7
 LABEL org.opencontainers.image.authors="qiuchengw@163.com"
@@ -88,13 +88,18 @@ COPY .gdbinit ${G_HOME_DIR}/
 COPY pip.conf ${G_HOME_DIR}/.pip/
 
 # 安装新的git
-ADD git-2.37.1.tar.gz ${G_SRCFILE_DIR}/
+ADD ./app/git-2.37.1.tar.gz ${G_SRCFILE_DIR}/
 # 安装cmake
-ADD cmake-3.23.3.tar.gz ${G_SRCFILE_DIR}/
+ADD ./app/cmake-3.23.3.tar.gz ${G_SRCFILE_DIR}/
 # 配置安装boost
-ADD boost_1_79_0.tar.gz ${G_SRCFILE_DIR}/
+ADD ./app/boost_1_79_0.tar.gz ${G_SRCFILE_DIR}/
 # 安装Python
-ADD Python-3.8.10.tgz ${G_SRCFILE_DIR}/
+ADD ./app/Python-3.8.10.tgz ${G_SRCFILE_DIR}/
+# 安装 flink
+ADD ./app/flink-1.16.0-bin-scala_2.12.tgz ${G_APP_DIR}/
+# 安装 kafka
+ADD ./app/kafka_2.12-3.3.1.tgz ${G_APP_DIR}/
+
 
 # 使用脚本再来一次执行安装
 COPY build.sh ${G_SRCFILE_DIR}/
